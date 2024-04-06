@@ -1,6 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
-import { BASE_URL } from 'boot/store';
+
+const BASE_URL = process.env.BASE_URL;
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
