@@ -133,6 +133,7 @@ function refreshToken() {
 }
 
 onMounted(() => {
+  console.log(process.env.BASE_URL)
   if (store.token === '') signIn();
   else {
     api.defaults.headers.Authorization = 'Bearer ' + store.token;
