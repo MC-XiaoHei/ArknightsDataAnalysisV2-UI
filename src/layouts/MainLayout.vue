@@ -133,7 +133,6 @@ function refreshToken() {
 }
 
 onMounted(() => {
-  console.log(import.meta.env['VITE_BASE_URL'])
   if (store.token === '') signIn();
   else {
     api.defaults.headers.Authorization = 'Bearer ' + store.token;
