@@ -12,6 +12,7 @@ export const IS_LUCKY_RANK = 'is_lucky_rank';
 export const IS_AUTO_GIFT = 'is_auto_gift';
 export const NAME_DISPLAY = 'name_display';
 export const NICKNAME_DISPLAY = 'nickname_display';
+export const BASE_URL = process.env.BASE_URL;
 
 export interface Account {
   uid: string;
