@@ -16,7 +16,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 // noinspection HttpUrlsUsage
 const api = axios.create({
-  baseURL: import.meta.env['BASE_URL']
+  baseURL: import.meta.env['VITE_BASE_URL']
 });
 
 export default boot(({ app }) => {
