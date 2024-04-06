@@ -1,8 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
 
-const BASE_URL = import.meta.env['VITE_BASE_URL'];
-
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     $axios: AxiosInstance;
@@ -18,7 +16,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 // noinspection HttpUrlsUsage
 const api = axios.create({
-  baseURL: BASE_URL
+  baseURL: import.meta.env['BASE_URL']
 });
 
 export default boot(({ app }) => {
