@@ -23,7 +23,7 @@ async function createAccount() {
     channel: account.value.channel,
     token: account.value.token
   }).then((res) => {
-    if(res.status === 200) {
+    if (res.status === 200) {
       addToUser();
     } else {
       tokenValid.value = false;
@@ -38,7 +38,7 @@ function addToUser() {
     channel: account.value.channel,
     token: account.value.token
   }).then((res) => {
-    if(res.status === 200) {
+    if (res.status === 200) {
       dialogRef.value?.hide();
       onDialogOK();
     } else {

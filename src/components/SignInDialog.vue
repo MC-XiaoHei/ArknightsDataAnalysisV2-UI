@@ -51,7 +51,7 @@ store.token = '';
 async function login() {
   $q.loading.show();
   let params = new URLSearchParams();
-  params.append('grant_type', '');
+  params.append('grant_type', 'password');
   params.append('username', username.value);
   params.append('password', password.value);
   params.append('scope', '');
