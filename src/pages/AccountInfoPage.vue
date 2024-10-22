@@ -4,11 +4,18 @@
 import store from '../boot/store';
 import { api } from 'boot/axios';
 
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
 watch(() => store.selectedAccount, () => {
   getOsrInfo();
   getPayRecordInfo();
+});
+
+onMounted(() => {
+  if (store.selectedAccount) {
+    getOsrInfo();
+    getPayRecordInfo();
+  }
 });
 
 const osrInfo = ref();
