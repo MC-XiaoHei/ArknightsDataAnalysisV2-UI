@@ -20,8 +20,8 @@
         </q-card-section>
 
         <div class="mt-[-16px] flex justify-end q-pa-md w-full space-x-4">
-          <q-btn class="flex-1" label="注册" @click="register();" color="primary" />
-          <q-btn class="flex-1" label="登录" type="submit" color="primary" />
+          <q-btn class="flex-1" label="注册" @click="register();" color="primary" :disable="!isFormValid" />
+          <q-btn class="flex-1" label="登录" type="submit" color="primary" :disable="!isFormValid" />
         </div>
       </q-form>
     </q-card>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import store from 'boot/store';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
 
@@ -41,6 +41,10 @@ const $q = useQuasar();
 const isPwd = ref(true);
 const password = ref('');
 const username = ref('');
+
+const isFormValid = computed(() => {
+  return username.value.trim() !== '' && password.value.trim() !== '';
+});
 
 defineEmits([
   ...useDialogPluginComponent.emits
@@ -54,9 +58,6 @@ async function login() {
   params.append('grant_type', 'password');
   params.append('username', username.value);
   params.append('password', password.value);
-  params.append('scope', '');
-  params.append('client_id', '');
-  params.append('client_secret', '');
 
   let config = {
     method: 'post',
@@ -80,12 +81,26 @@ async function login() {
       onDialogOK();
     })
     .catch((err) => {
-      console.log(err);
-      $q.notify({
-        type: 'negative',
-        message: '好好想想 你是不是记忆错乱了'
-      });
-      $q.loading.hide();
+      let errMessage = '登陆时发生未知错误';
+      try {
+        switch (err.response.data.detail) {
+          case 'user.login.password_error':
+          case 'user.login.username_error':
+            errMessage = '好好想想 你是不是记忆错乱了';
+            break;
+          case 'user.login.disabled':
+            errMessage = '此账号禁用中 请完成邮箱验证或者联系管理员';
+            break;
+        }
+      } catch (err1) {
+        console.log(err);
+      } finally {
+        $q.notify({
+          type: 'negative',
+          message: errMessage
+        });
+        $q.loading.hide();
+      }
     });
 }
 
@@ -99,7 +114,9 @@ async function register() {
       message: '',
       prompt: {
         model: '',
-        type: 'email'
+        type: 'email',
+        rules: [(val) => !!val || '邮箱不能为空', (val) => /.+@.+\..+/.test(val) || '邮箱格式不正确'],
+        isValid: val => /.+@.+\..+/.test(val)
       },
       persistent: true
     }).onOk(email => {
@@ -110,14 +127,32 @@ async function register() {
           email: email
         },
         captcha: captchaData
-      }).then(() => {
-        login();
+      }).then((res) => {
+        if (res.data.disabled) {
+          $q.notify({
+            type: 'positive',
+            message: '账号注册成功 但你需要完成邮箱验证才可登录'
+          });
+        } else {
+          login();
+        }
       }).catch((err) => {
-        console.log(err);
-        $q.notify({
-          type: 'negative',
-          message: '机器人不得入内'
-        });
+        let errMessage = '注册时发生未知错误';
+        try {
+          switch (err.response.data.detail) {
+            case 'user.register.user_exist':
+              errMessage = '你真的没注册过吗';
+              break;
+          }
+        } catch (err1) {
+          console.log(err);
+        } finally {
+          $q.notify({
+            type: 'negative',
+            message: errMessage
+          });
+          $q.loading.hide();
+        }
       });
     });
   });

@@ -1,8 +1,8 @@
 <template>
-  <q-dialog persistent ref="dialogRef" @hide="onDialogHide">
+  <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="w-[320px]">
 
-        <q-img :src="imgData"/>
+      <q-img :src="imgData" />
       <q-item-section class="text-h5 q-pa-md">
         <q-item-label class="text-gray-900">
           你好 证明下你是人
@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { ref } from 'vue';
 import { api } from 'boot/axios';
 
@@ -27,11 +27,22 @@ interface CaptchaInfo {
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
+const $q = useQuasar();
 const captchaInfo = ref<CaptchaInfo>({ captcha_token: '', code: '' });
 const imgData = ref('');
 
 function submit() {
-  onDialogOK(captchaInfo.value);
+  api.post('/captcha/validate', captchaInfo.value).then(() => {
+    onDialogOK(captchaInfo.value);
+  }).catch((err) => {
+    console.log(err);
+    $q.notify({
+      type: 'negative',
+      message: '你确定是这样的吗'
+    });
+    getNewCaptcha();
+    captchaInfo.value.code = '';
+  });
 }
 
 function getNewCaptcha() {
@@ -41,5 +52,5 @@ function getNewCaptcha() {
   });
 }
 
-getNewCaptcha()
+getNewCaptcha();
 </script>
