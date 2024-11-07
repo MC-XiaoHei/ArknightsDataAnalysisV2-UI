@@ -28,6 +28,28 @@
           </q-card-section>
         </q-card>
       </div>
+      <div class="col-sm-12 col-lg-4">
+        <q-card class="card card-elevated">
+          <q-card-section>
+            <div class="card-body">
+              <h4>第 三 步</h4>
+              <div>点击菜单中的
+                <q-btn flat round icon="add"></q-btn>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col-sm-12 col-lg-4">
+        <q-card class="card card-elevated">
+          <q-card-section>
+            <div class="card-body">
+              <h4>第 四 步</h4>
+              <div>将复制的内容粘贴到 <strong class="text-red">Context</strong> 栏并按下确定</div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
     </div>
   </q-page>
 </template>

@@ -1,22 +1,50 @@
 <!--suppress JSUnresolvedReference -->
 <script setup lang="ts">
 
-import store from '../boot/store';
+import store, { Account } from '../boot/store';
 import { api } from 'boot/axios';
 
 import { ref, watch, onMounted } from 'vue';
+import { useQuasar } from 'quasar';
+
+const $q = useQuasar();
 
 watch(() => store.selectedAccount, () => {
-  getOsrInfo();
-  getPayRecordInfo();
+  loadAccountData();
 });
 
 onMounted(() => {
-  if (store.selectedAccount) {
+  loadAccountData();
+});
+
+function loadAccountData() {
+  if (store.selectedAccount.uid == null) {
+    return;
+  }
+
+  api.post('accounts/info/check', {
+    uid: store.selectedAccount.uid
+  }).then(() => {
     getOsrInfo();
     getPayRecordInfo();
-  }
-});
+  }).catch((err) => {
+    let errMessage = '获取数据时发生未知错误';
+    try {
+      if (err.response.data.detail === 'account.info.token_invalid') {
+        store.selectedAccount.available = false;
+        errMessage = '账号token已失效 请更新后查看';
+      }
+    } catch (err1) {
+      console.log(err);
+    } finally {
+      store.selectedAccount = {} as Account
+      $q.notify({
+        type: 'negative',
+        message: errMessage
+      });
+    }
+  });
+}
 
 const osrInfo = ref();
 const osrLuckyAvg = ref();
