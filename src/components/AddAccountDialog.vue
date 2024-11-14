@@ -36,7 +36,7 @@ async function foundToken() {
 
     if (tokenData.length === 24) {
       account.value.channel = 'OFFICIAL';
-    } else if (tokenData.length === 296) {
+    } else if (tokenData.length >= 296) {
       account.value.channel = 'BILIBILI';
     } else {
       account.value.token = '';
